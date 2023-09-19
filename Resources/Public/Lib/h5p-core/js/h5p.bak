@@ -105,12 +105,6 @@ H5P.init = function (target) {
     };
 
     H5P.getUserData(contentId, 'state', function (err, previousState) {
-      //add
-      for (let i = 0; i < sessionStorage.length; i++) {
-        if (sessionStorage.key(i).includes(location.pathname + "/h5pcid_" + contentId) && sessionStorage.key(i).includes("h5p-state___")) H5P["previous" + contentId] = sessionStorage.getItem(sessionStorage.key(i));
-      }
-      if (H5P["previous" + contentId]) previousState = JSON.parse(H5P["previous" + contentId]);
-      //add_end
       if (previousState) {
         library.userDatas = {
           state: previousState
@@ -2493,9 +2487,6 @@ H5P.createTitle = function (rawTitle, maxLength) {
         options.errorCallback(error);
       }
     }, data, options.preloaded, options.deleteOnChange, options.async);
-    //add
-    if (H5P.instances[0].libraryInfo.machineName !== "H5P.Questionnaire") sessionStorage.setItem("h5p-state___" + location.pathname + "/h5pcid_" + contentId, data);
-    //add_end
   };
 
   /**
