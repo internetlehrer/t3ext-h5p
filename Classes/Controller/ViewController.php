@@ -145,6 +145,26 @@ class ViewController extends ActionController
         $contentSettings['displayOptions']['embed']     = (bool)($data['tx_h5p_display_options'] & \H5PCore::DISABLE_EMBED);
         $contentSettings['displayOptions']['copyright'] = (bool)($data['tx_h5p_display_options'] & \H5PCore::DISABLE_COPYRIGHT);
         $contentSettings['displayOptions']['icon']      = (bool)($data['tx_h5p_display_options'] & \H5PCore::DISABLE_ABOUT);
+        if (!key_exists('metadata', $contentSettings)) {
+            $h5pParameters = json_decode($content->getParameters());
+            if ($h5pParameters->metadata) {
+                $contentSettings['metadata'] = $h5pParameters->metadata;
+            } else {
+                // if no metadata is available, initialise with empty array
+                $contentSettings['metadata'] = array();
+            }
+        }
+        $found = false;
+        foreach ($contentSettings['scripts'] as $key => $value) {
+            if (strpos($value, 'h5p-interactive-book.js') > 0) {
+                if ($found == false) {
+                    $found = true;
+                } else {
+                    unset($contentSettings['scripts'][$key]);
+                    break;
+                }
+            }
+        }
         $this->pageRenderer->addJsInlineCode(
             'H5PIntegration contents cid-' . $content->getUid(),
             'H5PIntegration.contents[\'cid-' . $content->getUid() . '\'] = ' . json_encode($contentSettings) . ';'
